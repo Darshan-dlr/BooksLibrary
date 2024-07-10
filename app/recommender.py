@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.neighbors import NearestNeighbors
-from database import merged_review_collection 
+from .database import merged_review_collection 
 
 logging.basicConfig(level=logging.INFO)
 
@@ -46,17 +46,15 @@ class BookRecommender:
         self.features = np.hstack([genres_encoded, df['average_rating'].values.reshape(-1, 1)])
         self.knn.fit(self.features)
 
-        # Assign df to self.df after processing
         self.df = df
 
-    def train_model(self):
+    async def train_model(self):
         """
-        Train the KNN model synchronously.
+        Train the KNN model asynchronously.
         """
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.prepare_data())
+        await self.prepare_data()
 
-    def recommend_books(self, genres, min_rating=4.0, num_recommendations=5):
+    async def recommend_books(self, genres, min_rating=4.0, num_recommendations=5):
         """
         Recommend books based on genres and minimum average rating.
 
@@ -69,7 +67,7 @@ class BookRecommender:
         pd.DataFrame: DataFrame containing the recommended books.
         """
         if self.features is None:
-            self.train_model()
+            await self.train_model()
 
         genre_vector = self.mlb.transform([genres])
         avg_rating_vector = np.array([[min_rating]])
@@ -85,7 +83,7 @@ class BookRecommender:
 
         return recommendations.head(num_recommendations)[['title', 'average_rating', 'matched_genres']]
 
-    def recommend_books_by_title(self, book_title, min_rating=4.0, num_recommendations=5):
+    async def recommend_books_by_title(self, book_title, min_rating=4.0, num_recommendations=5):
         """
         Recommend books based on a book title.
 
@@ -97,8 +95,7 @@ class BookRecommender:
         Returns:
         pd.DataFrame: DataFrame containing the recommended books.
         """
-        loop = asyncio.get_event_loop()
-        df = loop.run_until_complete(self.load_data())
+        df = await self.load_data()
 
         book_row = df[df['title'].str.contains(book_title, case=False, na=False)]
 
@@ -107,16 +104,4 @@ class BookRecommender:
 
         genres = eval(book_row.iloc[0]['genre'])  # Convert genre from string to list
 
-        return self.recommend_books(genres, min_rating, num_recommendations)
-
-
-if __name__ == "__main__":
-    book_recommender = BookRecommender()
-    print("Training the model...")
-    #TODO: to train the model only at the time of running the server
-    book_recommender.train_model()
-
-    book_title = 'Harry Potter'
-    print(f'Recommendation for "{book_title}" :\n')
-    recommended_books_by_title = book_recommender.recommend_books_by_title(book_title, min_rating=4.0)
-    print(recommended_books_by_title)
+        return await self.recommend_books(genres, min_rating, num_recommendations)

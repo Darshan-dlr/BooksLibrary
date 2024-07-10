@@ -30,22 +30,37 @@ _Please reach out to me for the credentials if you need to test it in the databa
 
 ### 4. Run the FastAPI server
 ```bash
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 ```
-or
 
-```bash
-python -m uvicorn main:app --reload
-```
+---
 
 ## API Endpoints
 
 ### Authentication
 
-Use Basic Authentication for the protected endpoints. The default username is `user` and the default password is `password`.
+Use Basic Authentication for the protected endpoints. The default username is `Joe` and the default password is `librarian`.
 
-### Testing results
+### API Documentation
+
+Explore and test the API endpoints using the interactive Swagger UI:
+
+- Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)
+  
+  Use Swagger UI to view available endpoints, input parameters, and expected responses. Click on an endpoint to expand and see details such as HTTP methods, parameters, and response codes. Use the "Try it out" button to make requests directly from the documentation interface.
+
+- ReDoc: [http://localhost:8000/redoc](http://localhost:8000/redoc)
+  
+  ReDoc provides a cleaner documentation view with additional features for exploring the API.
+
+### Testing Results and Documentation
+
 The Api endpoints testing result and document can be found here : [api_testing.md](https://github.com/Darshan-dlr/BooksLibrary/blob/main/docs/api_testing.md)
+
+### OpenAPI JSON File
+
+The downloaded OpenAPI JSON file can be found in your project at [openapi.json](https://github.com/Darshan-dlr/BooksLibrary/blob/main/docs/openapi.json). Use this file to review the complete API specification.
+
 
 ### Testing with Postman
 - Install Postman from here.
