@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Path
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from typing import List
 from pydantic import BaseModel, Field
@@ -12,7 +12,11 @@ from .recommender import BookRecommender
 
 logging.basicConfig(level=logging.INFO)
 
-app = FastAPI()
+app = FastAPI(
+    title="Books Library Management System",
+    description="API for managing a library of books and reviews, with recommendations based on the genre and average rating of a provided book title.",
+    version="1.0.0"
+)
 security = HTTPBasic()
 
 class Book(BaseModel):
@@ -118,12 +122,12 @@ async def get_books():
     return books
 
 @app.get("/books/{id}", response_model=Book)
-async def get_book(id: str):
+async def get_book(id: str = Path(..., description="The ID of the book as a valid MongoDB ObjectId")):
     """
     Get a book by its ID.
 
     Args:
-        id (str): The ID of the book.
+        id (str): The ID of the book as a valid MongoDB ObjectId.
 
     Returns:
         Book: The book details.
@@ -138,12 +142,16 @@ async def get_book(id: str):
     return Book(**book)
 
 @app.put("/books/{id}", response_model=Book)
-async def update_book(id: str, book: Book, username: str = Depends(get_current_user)):
+async def update_book(
+    book: Book, 
+    id: str = Path(..., description="The ID of the book as a valid MongoDB ObjectId"), 
+    username: str = Depends(get_current_user)
+):
     """
     Update a book's details by its ID.
 
     Args:
-        id (str): The ID of the book.
+        id (str): The ID of the book as a valid MongoDB ObjectId.
         book (Book): The updated book details.
         username (str): The username of the authenticated user.
 
@@ -160,12 +168,12 @@ async def update_book(id: str, book: Book, username: str = Depends(get_current_u
     return book.dict()
 
 @app.delete("/books/{id}")
-async def delete_book(id: str, username: str = Depends(get_current_user)):
+async def delete_book(id: str = Path(..., description="The ID of the book as a valid MongoDB ObjectId"), username: str = Depends(get_current_user)):
     """
     Delete a book by its ID.
 
     Args:
-        id (str): The ID of the book.
+        id (str): The ID of the book as a valid MongoDB ObjectId.
         username (str): The username of the authenticated user.
 
     Returns:
@@ -181,12 +189,16 @@ async def delete_book(id: str, username: str = Depends(get_current_user)):
     return {"message": "Book deleted"}
 
 @app.post("/reviews/{book_id}", response_model=Review)
-async def add_review(book_id: str, review: Review, username: str = Depends(get_current_user)):
+async def add_review(
+    review: Review, 
+    book_id: str = Path(..., description="The ID of the book as a valid MongoDB ObjectId"), 
+    username: str = Depends(get_current_user)
+):
     """
     Add a review to a book.
 
     Args:
-        book_id (str): The ID of the book.
+        book_id (str): The ID of the book as a valid MongoDB ObjectId.
         review (Review): The review details.
         username (str): The username of the authenticated user.
 
@@ -204,12 +216,12 @@ async def add_review(book_id: str, review: Review, username: str = Depends(get_c
     return review_dict
 
 @app.get("/reviews/{book_id}", response_model=List[Review])
-async def get_reviews(book_id: str):
+async def get_reviews(book_id: str = Path(..., description="The ID of the book as a valid MongoDB ObjectId")):
     """
     Get a list of reviews for a specific book.
 
     Args:
-        book_id (str): The ID of the book.
+        book_id (str): The ID of the book as a valid MongoDB ObjectId.
 
     Returns:
         List[Review]: A list of reviews for the book.
@@ -222,9 +234,9 @@ async def get_reviews(book_id: str):
     return reviews
 
 @app.get("/recommendations/{book_title}")
-async def get_recommendations(book_title: str):
+async def get_recommendations(book_title: str = Path(..., description="The title of the book for generating recommendations based on genre and average rating")):
     """
-    Get book recommendations based on a book title.
+    Get book recommendations based on the genre and average rating of a provided book title.
 
     Args:
         book_title (str): The title of the book.
