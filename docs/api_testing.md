@@ -107,6 +107,10 @@ This document provides an overview of the API endpoints and includes screenshots
 
 
 1. **GET /recommendations/{title}**
-   - **Request:** Get book recommendations based on a book title.
-   - **Screenshot:** WIP
+   - **Request:** Provide the book title based on the genre of the provided book, and also recommend the book with the highest average ratings.
+
+Note: The displaying of matched_genres and average_rating would be removed going ahead
+   - **Screenshot:** 
+![image](https://github.com/Darshan-dlr/BooksLibrary/assets/72651034/d5df316b-6a3b-4dce-9c62-b2338c1a6435)
+
 
