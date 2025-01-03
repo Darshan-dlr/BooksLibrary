@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tests.test_recommender &mdash; Books Management System 1.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=fc837d61"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Books Management System
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Manual:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">BooksLibrary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_testing.html">Api</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../CHANGELOG.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Darshan-dlr/BooksLibrary">GitHub</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Books Management System</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tests.test_recommender</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tests.test_recommender</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">AsyncMock</span><span class="p">,</span> <span class="n">patch</span>
+<span class="c1"># from app.recommender import BookRecommender</span>
+
+<div class="viewcode-block" id="BookRecommender">
+<a class="viewcode-back" href="../../tests.html#tests.test_recommender.BookRecommender">[docs]</a>
+<span class="k">class</span> <span class="nc">BookRecommender</span><span class="p">:</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="mock_books_data">
+<a class="viewcode-back" href="../../tests.html#tests.test_recommender.mock_books_data">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">mock_books_data</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fixture for mock book data.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Book 1&quot;</span><span class="p">,</span> <span class="s2">&quot;genre&quot;</span><span class="p">:</span> <span class="s2">&quot;[&#39;Fantasy&#39;, &#39;Adventure&#39;]&quot;</span><span class="p">,</span> <span class="s2">&quot;average_rating&quot;</span><span class="p">:</span> <span class="mf">4.5</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Book 2&quot;</span><span class="p">,</span> <span class="s2">&quot;genre&quot;</span><span class="p">:</span> <span class="s2">&quot;[&#39;Science Fiction&#39;]&quot;</span><span class="p">,</span> <span class="s2">&quot;average_rating&quot;</span><span class="p">:</span> <span class="mf">3.8</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Book 3&quot;</span><span class="p">,</span> <span class="s2">&quot;genre&quot;</span><span class="p">:</span> <span class="s2">&quot;[&#39;Fantasy&#39;]&quot;</span><span class="p">,</span> <span class="s2">&quot;average_rating&quot;</span><span class="p">:</span> <span class="mf">4.7</span><span class="p">},</span>
+    <span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="recommender">
+<a class="viewcode-back" href="../../tests.html#tests.test_recommender.recommender">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">recommender</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fixture for the BookRecommender instance.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">BookRecommender</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="test_load_data">
+<a class="viewcode-back" href="../../tests.html#tests.test_recommender.test_load_data">[docs]</a>
+<span class="nd">@patch</span><span class="p">(</span><span class="s2">&quot;recommender.merged_review_collection.find&quot;</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">test_load_data</span><span class="p">(</span><span class="n">mock_find</span><span class="p">,</span> <span class="n">recommender</span><span class="p">,</span> <span class="n">mock_books_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test the load_data method.&quot;&quot;&quot;</span>
+    <span class="n">mock_find</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">AsyncMock</span><span class="p">()</span>
+    <span class="n">mock_find</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">to_list</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_books_data</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="k">await</span> <span class="n">recommender</span><span class="o">.</span><span class="n">load_data</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">mock_books_data</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="s2">&quot;genre&quot;</span><span class="p">,</span> <span class="s2">&quot;average_rating&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="test_prepare_data">
+<a class="viewcode-back" href="../../tests.html#tests.test_recommender.test_prepare_data">[docs]</a>
+<span class="nd">@patch</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="n">BookRecommender</span><span class="p">,</span> <span class="s2">&quot;load_data&quot;</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">test_prepare_data</span><span class="p">(</span><span class="n">mock_load_data</span><span class="p">,</span> <span class="n">recommender</span><span class="p">,</span> <span class="n">mock_books_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test the prepare_data method.&quot;&quot;&quot;</span>
+    <span class="n">mock_load_data</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">mock_books_data</span><span class="p">)</span>
+
+    <span class="k">await</span> <span class="n">recommender</span><span class="o">.</span><span class="n">prepare_data</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">recommender</span><span class="o">.</span><span class="n">features</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">recommender</span><span class="o">.</span><span class="n">df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">recommender</span><span class="o">.</span><span class="n">knn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_recommend_books">
+<a class="viewcode-back" href="../../tests.html#tests.test_recommender.test_recommend_books">[docs]</a>
+<span class="nd">@patch</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="n">BookRecommender</span><span class="p">,</span> <span class="s2">&quot;prepare_data&quot;</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">test_recommend_books</span><span class="p">(</span><span class="n">mock_prepare_data</span><span class="p">,</span> <span class="n">recommender</span><span class="p">,</span> <span class="n">mock_books_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test the recommend_books method.&quot;&quot;&quot;</span>
+    <span class="n">mock_prepare_data</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">recommender</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">mock_books_data</span><span class="p">)</span>
+    <span class="n">recommender</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">3.8</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">4.7</span><span class="p">]]</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">recommender</span><span class="o">.</span><span class="n">recommend_books</span><span class="p">([</span><span class="s2">&quot;Fantasy&quot;</span><span class="p">],</span> <span class="n">min_rating</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">num_recommendations</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">empty</span>
+    <span class="k">assert</span> <span class="s2">&quot;title&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">columns</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span></div>
+
+
+
+<div class="viewcode-block" id="test_recommend_books_by_title">
+<a class="viewcode-back" href="../../tests.html#tests.test_recommender.test_recommend_books_by_title">[docs]</a>
+<span class="nd">@patch</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="n">BookRecommender</span><span class="p">,</span> <span class="s2">&quot;load_data&quot;</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">test_recommend_books_by_title</span><span class="p">(</span><span class="n">mock_load_data</span><span class="p">,</span> <span class="n">recommender</span><span class="p">,</span> <span class="n">mock_books_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test the recommend_books_by_title method.&quot;&quot;&quot;</span>
+    <span class="n">mock_load_data</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">mock_books_data</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">recommender</span><span class="o">.</span><span class="n">recommend_books_by_title</span><span class="p">(</span><span class="s2">&quot;Book 1&quot;</span><span class="p">,</span> <span class="n">min_rating</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">num_recommendations</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="s2">&quot;title&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">columns</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Darshan D.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
