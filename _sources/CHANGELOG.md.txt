@@ -1,0 +1,23 @@
+# BooksLibrary ChangeLog
+All notable changes to this project will be documented in this file.
+ 
+The format is based on [Keep a Changelog](http://keepachangelog.com/)
+and this project adheres to [Semantic Versioning](http://semver.org/).
+ 
+## [1.0.0] - 2024-07-11
+
+### Added
+
+- Added the recommender system based on `KNN` 
+- Added the endpoints using `fastapi` which would interact with the mongoDB 
+
+ ## [1.1.0] - 2025-01-03
+
+### Added
+
+- Added the `test` files
+- Added the `sphinx` documents
+
+### Updated
+
+- Updated the module documents for the `main.py`, `recommender.py`
