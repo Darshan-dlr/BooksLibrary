@@ -1,3 +1,30 @@
+"""
+main.py
+=======
+
+This module defines the main application for the Books Library Management System.
+
+It provides a RESTful API built using FastAPI, allowing users to manage books,
+retrieve book summaries, generate recommendations, and manage reviews.
+
+The module includes the following features:
+- CRUD operations for books and reviews.
+- Book recommendations based on genres and average ratings.
+- Integration with MongoDB for data persistence.
+- Basic authentication for secure access to endpoints.
+
+Routes
+------
+- `/` : Health check endpoint.
+- `/books` : CRUD operations for books.
+- `/reviews` : CRUD operations for reviews.
+- `/recommendations` : Generate book recommendations.
+
+Authentication
+--------------
+Basic Authentication is used to protect endpoints, with a default username of `Joe` and a password of `librarian`.
+"""
+
 from fastapi import FastAPI, HTTPException, Depends, Path
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from typing import List

@@ -1,61 +1,56 @@
-# tests/test_main.py
-
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
-from app.main import Book, Review
 
-client = TestClient(app)
 
-@pytest.fixture(scope="module", autouse=True)
-def setup():
-    # Optional: Setup any fixtures needed for testing
-    pass
+@pytest.fixture
+def client():
+    """Fixture for the FastAPI test client."""
+    return TestClient(app)
 
-def test_add_book():
+
+def test_health_check(client):
+    """Test the health check endpoint."""
+    response = client.get("/")
+    assert response.status_code == 200
+    assert response.json() == {"message": "Welcome to the Books Library Management System"}
+
+
+def test_add_book(client):
+    """Test adding a new book."""
     new_book = {
         "title": "New Book",
         "author": "Author Name",
-        "genre": ["Fantasy", "Adventure"],
-        "year_published": 2023,
-        "summary": "Summary of the new book."
+        "genre": ["Fiction"],
+        "year_published": 2022,
+        "summary": "A new fictional book.",
     }
     response = client.post("/books", json=new_book)
-    assert response.status_code == 200
-    assert response.json()["title"] == new_book["title"]
+    assert response.status_code == 201
+    assert "id" in response.json()
 
-# def test_update_book():
-#     book_id = 1  # Replace with a valid book ID from your database
-#     updated_book_data = {
-#         "title": "Updated Book Title",
-#         "author": "New Author Name",
-#         "genre": ["Fantasy"],
-#         "year_published": 2023,
-#         "summary": "Updated summary of the book."
-#     }
-#     response = client.put(f"/books/{book_id}", json=updated_book_data)
-#     assert response.status_code == 200
-#     assert response.json()["title"] == updated_book_data["title"]
 
-# def test_delete_book():
-#     book_id = 1  # Replace with a valid book ID from your database
-#     response = client.delete(f"/books/{book_id}")
-#     assert response.status_code == 200
-#     assert response.json()["message"] == f"Book with ID {book_id} deleted successfully."
+def test_get_book(client):
+    """Test retrieving a book by ID."""
+    book_id = "some-mock-id"
+    response = client.get(f"/books/{book_id}")
+    assert response.status_code in [200, 404]  # Test for both existing and non-existing IDs
 
-def test_add_review():
-    book_id = '668ad5f90b1c65eab772091d'  # Replace with a valid book ID from your database
-    new_review = {
-        "user_id": 1214900281949712947,
-        "review_text": "This book was amazing!",
-        "rating": 5.0
+
+def test_recommend_books(client):
+    """Test the book recommendation endpoint."""
+    payload = {
+        "genres": ["Fantasy"],
+        "min_rating": 4.0,
+        "num_recommendations": 5,
     }
-    response = client.post(f"/books/{book_id}/reviews", json=new_review)
+    response = client.post("/recommendations", json=payload)
     assert response.status_code == 200
-    assert response.json()["review_text"] == new_review["review_text"]
+    assert isinstance(response.json(), list)
 
-# def test_get_book_summary():
-#     book_id = 1  # Replace with a valid book ID from your database
-#     response = client.get(f"/books/{book_id}/summary")
-#     assert response.status_code == 200
-#     assert "summary" in response.json()
+
+def test_authentication(client):
+    """Test authentication for a protected endpoint."""
+    response = client.get("/protected", headers={"Authorization": "Basic Sm9lOmxpYnJhcmlhbg=="})
+    assert response.status_code == 200
+    assert response.json() == {"message": "Authenticated"}

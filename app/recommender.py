@@ -1,3 +1,35 @@
+"""
+recommender.py
+==============
+
+This module provides the `BookRecommender` class, which implements a K-Nearest Neighbors (KNN)
+algorithm for recommending books based on genres and average ratings.
+
+The recommender system fetches data from a MongoDB collection and preprocesses it to
+train the KNN model. Recommendations can be generated based on:
+- Specific genres with a minimum rating threshold.
+- A reference book's title.
+
+Classes
+-------
+- `BookRecommender` : Encapsulates the recommendation logic.
+
+Dependencies
+------------
+- `sklearn.neighbors` : For the KNN model.
+- `sklearn.preprocessing` : For encoding genres.
+- `pandas` : For data manipulation.
+- `motor` : For asynchronous MongoDB interaction.
+
+Usage
+-----
+Instantiate the `BookRecommender` class and call the `recommend_books` or `recommend_books_by_title` methods.
+
+Example:
+    recommender = BookRecommender()
+    recommendations = recommender.recommend_books(['Fantasy'], min_rating=4.0)
+"""
+
 import logging
 import asyncio
 import pandas as pd
