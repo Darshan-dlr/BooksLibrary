@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Books Library &mdash; Books Management System 1.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=fc837d61"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Books Management System
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Manual:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">BooksLibrary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api_testing.html">Api</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Darshan-dlr/BooksLibrary">GitHub</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Books Management System</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Books Library</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/README.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="books-library">
+<h1>Books Library<a class="headerlink" href="#books-library" title="Link to this heading"></a></h1>
+<p>This project is a Book Management System that allows users to manage books and reviews. It includes a RESTful API built with FastAPI and a book recommendation system using KNN.</p>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Python 3.7+</p></li>
+<li><p>MongoDB (either a local installation or MongoDB Atlas)</p></li>
+<li><p>pip (Python package installer)</p></li>
+</ul>
+</section>
+<section id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Link to this heading"></a></h2>
+<section id="clone-the-repository">
+<h3>1. Clone the repository<a class="headerlink" href="#clone-the-repository" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Darshan-dlr/BooksLibrary
+<span class="nb">cd</span><span class="w"> </span>BooksLibrary
+</pre></div>
+</div>
+</section>
+<section id="install-dependencies">
+<h3>2. Install dependencies<a class="headerlink" href="#install-dependencies" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+</section>
+<section id="set-up-mongodb">
+<h3>3.  Set up MongoDB<a class="headerlink" href="#set-up-mongodb" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>If you haven’t already, set up a MongoDB instance either locally or using MongoDB Atlas.</p></li>
+<li><p>Update the MONGO_DETAILS variable in <a class="reference external" href="https://github.com/Darshan-dlr/BooksLibrary/blob/5ac33b3a6d4298fee15387993bc5b8c01b490590/app/database.py#L7">database.py</a> with your MongoDB connection string.</p></li>
+</ul>
+<p><em>Please reach out to me for the credentials if you need to test it in the database I used during development</em></p>
+</section>
+<section id="run-the-fastapi-server">
+<h3>4. Run the FastAPI server<a class="headerlink" href="#run-the-fastapi-server" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uvicorn<span class="w"> </span>app.main:app<span class="w"> </span>--reload
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="api-endpoints">
+<h2>API Endpoints<a class="headerlink" href="#api-endpoints" title="Link to this heading"></a></h2>
+<section id="authentication">
+<h3>Authentication<a class="headerlink" href="#authentication" title="Link to this heading"></a></h3>
+<p>Use Basic Authentication for the protected endpoints. The default username is <code class="docutils literal notranslate"><span class="pre">Joe</span></code> and the default password is <code class="docutils literal notranslate"><span class="pre">librarian</span></code>.</p>
+</section>
+<section id="api-documentation">
+<h3>API Documentation<a class="headerlink" href="#api-documentation" title="Link to this heading"></a></h3>
+<p>Explore and test the API endpoints using the interactive Swagger UI:</p>
+<ul>
+<li><p>Swagger UI: <a class="reference external" href="http://localhost:8000/docs">http://localhost:8000/docs</a></p>
+<p>Use Swagger UI to view available endpoints, input parameters, and expected responses. Click on an endpoint to expand and see details such as HTTP methods, parameters, and response codes. Use the “Try it out” button to make requests directly from the documentation interface.</p>
+</li>
+<li><p>ReDoc: <a class="reference external" href="http://localhost:8000/redoc">http://localhost:8000/redoc</a></p>
+<p>ReDoc provides a cleaner documentation view with additional features for exploring the API.</p>
+</li>
+</ul>
+</section>
+<section id="testing-results-and-documentation">
+<h3>Testing Results and Documentation<a class="headerlink" href="#testing-results-and-documentation" title="Link to this heading"></a></h3>
+<p>The Api endpoints testing result and document can be found here : <a class="reference external" href="https://github.com/Darshan-dlr/BooksLibrary/blob/main/docs/api_testing.md">api_testing.md</a></p>
+</section>
+<section id="openapi-json-file">
+<h3>OpenAPI JSON File<a class="headerlink" href="#openapi-json-file" title="Link to this heading"></a></h3>
+<p>The downloaded OpenAPI JSON file can be found in your project at <a class="reference external" href="https://github.com/Darshan-dlr/BooksLibrary/blob/main/docs/openapi.json">openapi.json</a>. Use this file to review the complete API specification.</p>
+</section>
+<section id="testing-with-postman">
+<h3>Testing with Postman<a class="headerlink" href="#testing-with-postman" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Install Postman from here.</p></li>
+<li><p>Create a new request in Postman.</p></li>
+<li><p>Set the request type (GET, POST, PUT, DELETE) and the URL (e.g., http://127.0.0.1:8000/books).</p></li>
+<li><p>Set the authorization type to Basic Auth and provide the username and password (user and password).</p></li>
+<li><p>For POST and PUT requests, go to the Body tab, select raw, and set the format to JSON</p></li>
+<li><p>Enter the request body as specified above.</p></li>
+<li><p>Send the request and check the response.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="book-recommendation-system">
+<h2>Book Recommendation System<a class="headerlink" href="#book-recommendation-system" title="Link to this heading"></a></h2>
+<p>The recommendation system uses KNN to recommend books based on genres and ratings. The data is loaded from MongoDB.</p>
+<section id="data">
+<h3>Data<a class="headerlink" href="#data" title="Link to this heading"></a></h3>
+<p>The data used for the recommendation system is available as a CSV file. You can download it from the following link:</p>
+<p><a class="reference external" href="https://www.kaggle.com/datasets/ishikajohari/best-books-10k-multi-genre-data?resource=download">Goodreads Books Data</a></p>
+</section>
+<section id="id1">
+<h3>Setup<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<ol class="arabic">
+<li><p><strong>Download the CSV file</strong> from the link provided above.</p></li>
+<li><p><strong>Upload the data to MongoDB</strong></p>
+<ul class="simple">
+<li><p>Ensure MongoDB is running and accessible.</p></li>
+<li><p>Use the following Python script to upload the data from the CSV file to the <code class="docutils literal notranslate"><span class="pre">merged_review</span></code> collection in your MongoDB database:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">MongoClient</span>
+
+<span class="c1"># Replace with your MongoDB connection string</span>
+<span class="n">MONGO_DETAILS</span> <span class="o">=</span> <span class="s2">&quot;mongodb+srv://&lt;username&gt;:&lt;password&gt;@cluster0.mongodb.net/test?retryWrites=true&amp;w=majority&quot;</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">MongoClient</span><span class="p">(</span><span class="n">MONGO_DETAILS</span><span class="p">)</span>
+
+<span class="n">database</span> <span class="o">=</span> <span class="n">client</span><span class="p">[</span><span class="s1">&#39;BooksLibrary&#39;</span><span class="p">]</span>
+<span class="n">merged_review_collection</span> <span class="o">=</span> <span class="n">database</span><span class="p">[</span><span class="s1">&#39;merged_review&#39;</span><span class="p">]</span>
+
+<span class="c1"># Load the CSV file</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="s1">&#39;path_to_your_csv_file.csv&#39;</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+<span class="c1"># Insert the data into MongoDB</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">)</span>
+<span class="n">merged_review_collection</span><span class="o">.</span><span class="n">insert_many</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Data uploaded successfully!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Update <code class="docutils literal notranslate"><span class="pre">recommender.py</span></code></strong> with your MongoDB connection details if needed.</p></li>
+</ol>
+</section>
+<section id="example-usage">
+<h3>Example Usage<a class="headerlink" href="#example-usage" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">recommender</span> <span class="kn">import</span> <span class="n">BookRecommender</span>
+
+<span class="n">book_recommender</span> <span class="o">=</span> <span class="n">BookRecommender</span><span class="p">()</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">book_recommender</span><span class="o">.</span><span class="n">prepare_data</span><span class="p">()</span>
+    <span class="n">recommendations</span> <span class="o">=</span> <span class="n">book_recommender</span><span class="o">.</span><span class="n">recommend_books_by_title</span><span class="p">(</span><span class="s1">&#39;Harry Potter&#39;</span><span class="p">,</span> <span class="n">min_rating</span><span class="o">=</span><span class="mf">4.0</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">recommendations</span><span class="p">)</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Link to this heading"></a></h2>
+<p>This project is licensed under the MIT License.</p>
+</section>
+<section id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Link to this heading"></a></h2>
+<p>Feel free to explore and suggest changes! You can create issues and submit pull requests on the <a class="reference external" href="https://github.com/Darshan-dlr/BooksLibrary/">BooksLibrary</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Darshan D.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

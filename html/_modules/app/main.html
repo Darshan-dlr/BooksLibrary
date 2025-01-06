@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.main &mdash; Books Management System 1.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=fc837d61"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Books Management System
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Manual:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">BooksLibrary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_testing.html">Api</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../CHANGELOG.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Darshan-dlr/BooksLibrary">GitHub</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Books Management System</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">app.main</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for app.main</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">main.py</span>
+<span class="sd">=======</span>
+
+<span class="sd">This module defines the main application for the Books Library Management System.</span>
+
+<span class="sd">It provides a RESTful API built using FastAPI, allowing users to manage books,</span>
+<span class="sd">retrieve book summaries, generate recommendations, and manage reviews.</span>
+
+<span class="sd">The module includes the following features:</span>
+<span class="sd">- CRUD operations for books and reviews.</span>
+<span class="sd">- Book recommendations based on genres and average ratings.</span>
+<span class="sd">- Integration with MongoDB for data persistence.</span>
+<span class="sd">- Basic authentication for secure access to endpoints.</span>
+
+<span class="sd">Routes</span>
+<span class="sd">------</span>
+<span class="sd">- `/` : Health check endpoint.</span>
+<span class="sd">- `/books` : CRUD operations for books.</span>
+<span class="sd">- `/reviews` : CRUD operations for reviews.</span>
+<span class="sd">- `/recommendations` : Generate book recommendations.</span>
+
+<span class="sd">Authentication</span>
+<span class="sd">--------------</span>
+<span class="sd">Basic Authentication is used to protect endpoints, with a default username of `Joe` and a password of `librarian`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">fastapi.security</span> <span class="kn">import</span> <span class="n">HTTPBasic</span><span class="p">,</span> <span class="n">HTTPBasicCredentials</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span> <span class="nn">bson</span> <span class="kn">import</span> <span class="n">ObjectId</span>
+<span class="kn">from</span> <span class="nn">bson.errors</span> <span class="kn">import</span> <span class="n">InvalidId</span>
+<span class="kn">import</span> <span class="nn">motor.motor_asyncio</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="c1"># from .database import books_collection, reviews_collection, client</span>
+<span class="kn">from</span> <span class="nn">.recommender</span> <span class="kn">import</span> <span class="n">BookRecommender</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Books Library Management System&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;API for managing a library of books and reviews, with recommendations based on the genre and average rating of a provided book title.&quot;</span><span class="p">,</span>
+    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;1.0.0&quot;</span>
+<span class="p">)</span>
+<span class="n">security</span> <span class="o">=</span> <span class="n">HTTPBasic</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Book">
+<a class="viewcode-back" href="../../app.html#app.main.Book">[docs]</a>
+<span class="k">class</span> <span class="nc">Book</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">author</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">genre</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">year_published</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">summary</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+<div class="viewcode-block" id="Review">
+<a class="viewcode-back" href="../../app.html#app.main.Review">[docs]</a>
+<span class="k">class</span> <span class="nc">Review</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">review_text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">rating</span><span class="p">:</span> <span class="nb">float</span></div>
+
+
+<span class="n">book_recommender</span> <span class="o">=</span> <span class="n">BookRecommender</span><span class="p">()</span>
+
+<div class="viewcode-block" id="startup_db_client">
+<a class="viewcode-back" href="../../app.html#app.main.startup_db_client">[docs]</a>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">startup_db_client</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">server_info</span><span class="p">()</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Connected to MongoDB&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">book_recommender</span><span class="o">.</span><span class="n">prepare_data</span><span class="p">()</span> 
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Book recommender system trained and ready&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="shutdown_db_client">
+<a class="viewcode-back" href="../../app.html#app.main.shutdown_db_client">[docs]</a>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown_db_client</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MongoDB connection closed&quot;</span><span class="p">)</span></div>
+
+
+<span class="n">app</span><span class="o">.</span><span class="n">add_event_handler</span><span class="p">(</span><span class="s2">&quot;startup&quot;</span><span class="p">,</span> <span class="n">startup_db_client</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">add_event_handler</span><span class="p">(</span><span class="s2">&quot;shutdown&quot;</span><span class="p">,</span> <span class="n">shutdown_db_client</span><span class="p">)</span>
+
+<div class="viewcode-block" id="get_current_user">
+<a class="viewcode-back" href="../../app.html#app.main.get_current_user">[docs]</a>
+<span class="k">def</span> <span class="nf">get_current_user</span><span class="p">(</span><span class="n">credentials</span><span class="p">:</span> <span class="n">HTTPBasicCredentials</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">security</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Authenticate the user using HTTP Basic Authentication.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        credentials (HTTPBasicCredentials): HTTP Basic Authentication credentials.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The username if authentication is successful.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        HTTPException: If the username or password is incorrect.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">correct_username</span> <span class="o">=</span> <span class="s2">&quot;Joe&quot;</span>
+    <span class="n">correct_password</span> <span class="o">=</span> <span class="s2">&quot;librarian&quot;</span>
+    <span class="k">if</span> <span class="n">credentials</span><span class="o">.</span><span class="n">username</span> <span class="o">!=</span> <span class="n">correct_username</span> <span class="ow">or</span> <span class="n">credentials</span><span class="o">.</span><span class="n">password</span> <span class="o">!=</span> <span class="n">correct_password</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">401</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Incorrect username or password&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">credentials</span><span class="o">.</span><span class="n">username</span></div>
+
+
+<div class="viewcode-block" id="parse_objectid">
+<a class="viewcode-back" href="../../app.html#app.main.parse_objectid">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_objectid</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse a string to an ObjectId.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        id (str): The ID string to be parsed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ObjectId: The parsed ObjectId.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        HTTPException: If the ID format is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ObjectId</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">InvalidId</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Invalid ID format&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="root">
+<a class="viewcode-back" href="../../app.html#app.main.root">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">root</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Welcome endpoint.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: A welcome message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Welcome to our library&quot;</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="add_book">
+<a class="viewcode-back" href="../../app.html#app.main.add_book">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/books&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">Book</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">add_book</span><span class="p">(</span><span class="n">book</span><span class="p">:</span> <span class="n">Book</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add a new book to the library.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        book (Book): The book details.</span>
+<span class="sd">        username (str): The username of the authenticated user.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: The added book details including the ID.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">book_dict</span> <span class="o">=</span> <span class="n">book</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">books_collection</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span><span class="n">book_dict</span><span class="p">)</span>
+    <span class="n">book_dict</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">inserted_id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">book_dict</span></div>
+
+
+<div class="viewcode-block" id="get_books">
+<a class="viewcode-back" href="../../app.html#app.main.get_books">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/books&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">Book</span><span class="p">])</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_books</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a list of all books in the library.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List[Book]: A list of all books.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">books</span> <span class="o">=</span> <span class="k">await</span> <span class="n">books_collection</span><span class="o">.</span><span class="n">find</span><span class="p">()</span><span class="o">.</span><span class="n">to_list</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">books</span></div>
+
+
+<div class="viewcode-block" id="get_book">
+<a class="viewcode-back" href="../../app.html#app.main.get_book">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/books/</span><span class="si">{id}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">Book</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_book</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The ID of the book as a valid MongoDB ObjectId&quot;</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a book by its ID.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        id (str): The ID of the book as a valid MongoDB ObjectId.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Book: The book details.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        HTTPException: If the book is not found or the ID format is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">book_id</span> <span class="o">=</span> <span class="n">parse_objectid</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+    <span class="n">book</span> <span class="o">=</span> <span class="k">await</span> <span class="n">books_collection</span><span class="o">.</span><span class="n">find_one</span><span class="p">({</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="n">book_id</span><span class="p">})</span>
+    <span class="k">if</span> <span class="n">book</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Book not found&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Book</span><span class="p">(</span><span class="o">**</span><span class="n">book</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="update_book">
+<a class="viewcode-back" href="../../app.html#app.main.update_book">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/books/</span><span class="si">{id}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">Book</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">update_book</span><span class="p">(</span>
+    <span class="n">book</span><span class="p">:</span> <span class="n">Book</span><span class="p">,</span> 
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The ID of the book as a valid MongoDB ObjectId&quot;</span><span class="p">),</span> 
+    <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">)</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update a book&#39;s details by its ID.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        id (str): The ID of the book as a valid MongoDB ObjectId.</span>
+<span class="sd">        book (Book): The updated book details.</span>
+<span class="sd">        username (str): The username of the authenticated user.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Book: The updated book details.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        HTTPException: If the book is not found or the ID format is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">book_id</span> <span class="o">=</span> <span class="n">parse_objectid</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">books_collection</span><span class="o">.</span><span class="n">update_one</span><span class="p">({</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="n">book_id</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;$set&quot;</span><span class="p">:</span> <span class="n">book</span><span class="o">.</span><span class="n">dict</span><span class="p">()})</span>
+    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">matched_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Book not found&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">book</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="delete_book">
+<a class="viewcode-back" href="../../app.html#app.main.delete_book">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;/books/</span><span class="si">{id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">delete_book</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The ID of the book as a valid MongoDB ObjectId&quot;</span><span class="p">),</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Delete a book by its ID.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        id (str): The ID of the book as a valid MongoDB ObjectId.</span>
+<span class="sd">        username (str): The username of the authenticated user.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: A message indicating the book was deleted.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        HTTPException: If the book is not found or the ID format is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">book_id</span> <span class="o">=</span> <span class="n">parse_objectid</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">books_collection</span><span class="o">.</span><span class="n">delete_one</span><span class="p">({</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="n">book_id</span><span class="p">})</span>
+    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">deleted_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Book not found&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Book deleted&quot;</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="add_review">
+<a class="viewcode-back" href="../../app.html#app.main.add_review">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/reviews/</span><span class="si">{book_id}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">Review</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">add_review</span><span class="p">(</span>
+    <span class="n">review</span><span class="p">:</span> <span class="n">Review</span><span class="p">,</span> 
+    <span class="n">book_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The ID of the book as a valid MongoDB ObjectId&quot;</span><span class="p">),</span> 
+    <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">)</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add a review to a book.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        book_id (str): The ID of the book as a valid MongoDB ObjectId.</span>
+<span class="sd">        review (Review): The review details.</span>
+<span class="sd">        username (str): The username of the authenticated user.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: The added review details including the ID.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        HTTPException: If the book is not found or the ID format is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">book_id</span> <span class="o">=</span> <span class="n">parse_objectid</span><span class="p">(</span><span class="n">book_id</span><span class="p">)</span>
+    <span class="n">review_dict</span> <span class="o">=</span> <span class="n">review</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+    <span class="n">review_dict</span><span class="p">[</span><span class="s2">&quot;book_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">book_id</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">reviews_collection</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span><span class="n">review_dict</span><span class="p">)</span>
+    <span class="n">review_dict</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">inserted_id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">review_dict</span></div>
+
+
+<div class="viewcode-block" id="get_reviews">
+<a class="viewcode-back" href="../../app.html#app.main.get_reviews">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/reviews/</span><span class="si">{book_id}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">Review</span><span class="p">])</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_reviews</span><span class="p">(</span><span class="n">book_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The ID of the book as a valid MongoDB ObjectId&quot;</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a list of reviews for a specific book.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        book_id (str): The ID of the book as a valid MongoDB ObjectId.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List[Review]: A list of reviews for the book.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        HTTPException: If the ID format is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">book_id</span> <span class="o">=</span> <span class="n">parse_objectid</span><span class="p">(</span><span class="n">book_id</span><span class="p">)</span>
+    <span class="n">reviews</span> <span class="o">=</span> <span class="k">await</span> <span class="n">reviews_collection</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s2">&quot;book_id&quot;</span><span class="p">:</span> <span class="n">book_id</span><span class="p">})</span><span class="o">.</span><span class="n">to_list</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reviews</span></div>
+
+
+<div class="viewcode-block" id="get_recommendations">
+<a class="viewcode-back" href="../../app.html#app.main.get_recommendations">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/recommendations/</span><span class="si">{book_title}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_recommendations</span><span class="p">(</span><span class="n">book_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The title of the book for generating recommendations based on genre and average rating&quot;</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get book recommendations based on the genre and average rating of a provided book title.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        book_title (str): The title of the book.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of recommended books.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">recommendations</span> <span class="o">=</span> <span class="k">await</span> <span class="n">book_recommender</span><span class="o">.</span><span class="n">recommend_books_by_title</span><span class="p">(</span><span class="n">book_title</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">recommendations</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="n">recommendations</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">recommendations</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Darshan D.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
